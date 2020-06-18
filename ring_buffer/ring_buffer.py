@@ -24,7 +24,7 @@ class LinkedList:
 
     def add_to_tail(self, value):
         # wrap the input value in a node
-        new_node = Node(value, self.head)
+        new_node = Node(value, None)
         # check if there is no head (i.e., the list is empty)
         if not self.head:
             # if the list is initially empty, set both head and tail to the new node
@@ -106,46 +106,34 @@ class RingBuffer:
         self.capacity = capacity
         self.storage = LinkedList()
         self.size = 0
-        self.result = []
         self.oldest_node = None
 
     def append(self, item):
-        new_node = Node(item)
-        if self.size == 0:
-            self.storage.head == new_node
-            self.storage.tail == new_node
-            # self.storage.head.next_node = None
-            # self.storage.tail.next_node = None
-            self.oldest_node = new_node
             
-
+        if self.size < self.capacity:
+            self.storage.add_to_tail(item)
+            #oldest node set to head
+            self.oldest_node = self.storage.head
             self.size = self.size + 1
 
-            
-
-        elif self.size < self.capacity:
-            current_tail = self.storage.tail
-            current_tail.next_node = new_node
-            self.storage.tail = new_node
-            self.storage.tail.next_node = self.storage.head
-            self.size + 1
-            self.oldest_node = self.storage.tail
-
-            
-
-        elif self.size == self.capacity:
-            current_tail = self.storage.tail
-            current_tail.next_node = new_node
-            self.storage.tail = new_node
-            self.storage.tail.next_node = self.storage.head.next_node
-            self.oldest_node = self.storage.tail
+        else: 
+            #oldest node is the head
+            self.oldest_node.value = item
+            #set head's value to item passed in
+            self.oldest_node = self.oldest_node.next_node 
+            #set oldest node to to the former oldest node's next node
+            if self.oldest_node is None:
+                self.oldest_node = self.storage.head
 
     def get(self):
         #returns the values passed into ring buffer
-        node = self.oldest_node
+        result = []
+        node = self.storage.head
         while node:
-            self.result.append(node.value)
+            result.append(node.value)
             node = node.next_node
+        
+        return result
                 
 
     # something
